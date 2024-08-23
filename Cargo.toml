@@ -1,0 +1,18 @@
+[package]
+name = "cli-utils"
+version = "0.1.0"
+edition = "2021"
+authors = ["Suraj Vijayan", "Suraj Vijayan <surajvijay67@gmail.com>"]
+description = "Rewrite of basic CLI tools in Rust"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "cli-utils"
+
+[dependencies]
+clap = "4.5.16"
+color-eyre = "0.6.3"
+thiserror = "1.0.63"
