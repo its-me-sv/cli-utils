@@ -11,7 +11,12 @@ pub fn echo_handler(args: EchoArgs) -> String {
     let mut result = vec![];
 
     if let Some(strings) = strings {
-        let mut combined_string = strings.join(" ");
+        let mut combined_string = strings
+            .iter()
+            .map(|string| string.trim().to_owned())
+            .collect::<Vec<String>>()
+            .join(" ");
+
         if enable_escape_characters {
             combined_string = combined_string
                 .replace("\\n", "\n")
@@ -28,5 +33,5 @@ pub fn echo_handler(args: EchoArgs) -> String {
         result.push("\n".to_owned());
     }
 
-    result.join(" ")
+    result.join("")
 }

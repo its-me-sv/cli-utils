@@ -1,25 +1,4 @@
-use clap::{Args, Parser, Subcommand};
-
-#[derive(Debug, Parser)]
-#[command(author, version, about, long_about = None)]
-pub struct CliUtilsArgs {
-    #[command(subcommand)]
-    pub tool: Tool,
-}
-
-#[derive(Debug, Subcommand)]
-pub enum Tool {
-    /// Repeats input
-    Echo(EchoArgs),
-    /// Concatenates files
-    Cat,
-    /// Lists directories
-    Ls,
-    /// Locates files or directories
-    Find,
-    /// Matches text in files
-    Grep,
-}
+use clap::Args;
 
 #[derive(Debug, Args)]
 pub struct EchoArgs {
@@ -34,4 +13,20 @@ pub struct EchoArgs {
     /// Displays the output while omitting the newline after it
     #[arg(short = 'n')]
     pub omit_newline: bool,
+}
+
+impl EchoArgs {
+    pub fn new(
+        strings: Option<Vec<String>>,
+        disable_escape_characters: bool,
+        enable_escape_characters: bool,
+        omit_newline: bool,
+    ) -> Self {
+        Self {
+            strings,
+            disable_escape_characters,
+            enable_escape_characters,
+            omit_newline,
+        }
+    }
 }
