@@ -8,30 +8,32 @@ pub fn echo_handler(args: EchoArgs) -> String {
         ..
     } = args;
 
-    let mut result = vec![];
+    // No input was provided
+    if strings.is_none() {
+        return String::from(if !omit_newline { "\n" } else { "" });
+    }
 
-    if let Some(strings) = strings {
-        let mut combined_string = strings
-            .iter()
-            .map(|string| string.trim().to_owned())
-            .collect::<Vec<String>>()
-            .join(" ");
+    let strings = strings.unwrap();
 
-        if enable_escape_characters {
-            combined_string = combined_string
-                .replace("\\n", "\n")
-                .replace("\\r", "\r")
-                .replace("\\t", "\t")
-                .replace("\\'", "\'")
-                .replace("\\\"", "\"")
-                .replace("\\\\", "\\");
-        }
-        result.push(combined_string);
+    let mut combined_string = strings
+        .iter()
+        .map(|string| string.trim().to_owned())
+        .collect::<Vec<String>>()
+        .join(" ");
+
+    if enable_escape_characters {
+        combined_string = combined_string
+            .replace("\\n", "\n")
+            .replace("\\r", "\r")
+            .replace("\\t", "\t")
+            .replace("\\'", "\'")
+            .replace("\\\"", "\"")
+            .replace("\\\\", "\\");
     }
 
     if !omit_newline {
-        result.push("\n".to_owned());
+        return format!("{combined_string}\n");
     }
 
-    result.join("")
+    combined_string
 }
