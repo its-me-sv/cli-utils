@@ -4,6 +4,7 @@ mod find;
 mod grep;
 mod ls;
 
+pub use cat::CatArgs;
 use clap::{Parser, Subcommand};
 pub use echo::EchoArgs;
 
@@ -19,7 +20,7 @@ pub enum Tool {
     /// Repeats input
     Echo(EchoArgs),
     /// Concatenates files
-    Cat,
+    Cat(CatArgs),
     /// Lists directories
     Ls,
     /// Locates files or directories
