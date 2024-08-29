@@ -1,39 +1,55 @@
 use crate::args::EchoArgs;
 
-pub fn echo_handler(args: EchoArgs) -> String {
-    let EchoArgs {
-        strings,
-        omit_newline,
-        enable_escape_characters,
-        ..
-    } = args;
+pub struct EchoParser {
+    args: EchoArgs,
+}
 
-    // No input was provided
-    if strings.is_none() {
-        return String::from(if !omit_newline { "\n" } else { "" });
+impl EchoParser {
+    pub fn new(args: EchoArgs) -> Self {
+        Self { args }
     }
 
-    let strings = strings.unwrap();
-
-    let mut combined_string = strings
-        .iter()
-        .map(|string| string.trim().to_owned())
-        .collect::<Vec<String>>()
-        .join(" ");
-
-    if enable_escape_characters {
-        combined_string = combined_string
-            .replace("\\n", "\n")
-            .replace("\\r", "\r")
-            .replace("\\t", "\t")
-            .replace("\\'", "\'")
-            .replace("\\\"", "\"")
-            .replace("\\\\", "\\");
+    pub fn parse(&self) -> String {
+        self.args
+            .strings
+            .as_ref()
+            .map_or(String::from("\n"), |strings| {
+                self.handle_input_strings(strings)
+            })
     }
 
-    if !omit_newline {
-        return format!("{combined_string}\n");
-    }
+    fn handle_input_strings(&self, strings: &[String]) -> String {
+        let estimated_size = strings.iter().map(|string| string.len()).sum();
+        let mut combined_strings = String::with_capacity(estimated_size);
 
-    combined_string
+        strings.iter().for_each(|string| {
+            combined_strings.push_str(string.trim());
+            combined_strings.push(' ');
+        });
+
+        combined_strings.pop();
+
+        if self.args.enable_escape_characters && combined_strings.contains('\\') {
+            [
+                ("\\n", "\n"),
+                ("\\r", "\r"),
+                ("\\t", "\t"),
+                ("\\'", "\'"),
+                ("\\\"", "\""),
+                ("\\\\", "\\"),
+            ]
+            .into_iter()
+            .for_each(|(from, to)| {
+                if combined_strings.contains(from) {
+                    combined_strings = combined_strings.replace(from, to);
+                }
+            });
+        }
+
+        if !self.args.omit_newline {
+            combined_strings.push('\n');
+        }
+
+        combined_strings
+    }
 }

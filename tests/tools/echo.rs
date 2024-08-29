@@ -1,39 +1,39 @@
-use cli_utils::{args::EchoArgs, tools::echo_handler};
+use cli_utils::{args::EchoArgs, tools::EchoParser};
 
 #[test]
 fn echo_with_no_options() {
     let input = EchoArgs::new(Some(vec!["Hello, World!".to_string()]), true, false, false);
-    assert_eq!("Hello, World!\n", echo_handler(input).as_str());
+    assert_eq!("Hello, World!\n", EchoParser::new(input).parse());
 }
 
 #[test]
 fn echo_with_omit_newline() {
     let input = EchoArgs::new(Some(vec!["Hello, World!".to_string()]), true, false, true);
-    assert_eq!("Hello, World!", echo_handler(input).as_str());
+    assert_eq!("Hello, World!", EchoParser::new(input).parse());
 }
 
 #[test]
 fn echo_with_escape_characters_enabled() {
     let input = EchoArgs::new(Some(vec!["Hello\\nWorld".to_string()]), true, true, false);
-    assert_eq!("Hello\nWorld\n", echo_handler(input).as_str());
+    assert_eq!("Hello\nWorld\n", EchoParser::new(input).parse());
 }
 
 #[test]
 fn echo_with_escape_characters_disabled() {
     let input = EchoArgs::new(Some(vec!["Hello\\nWorld".to_string()]), true, false, false);
-    assert_eq!("Hello\\nWorld\n", echo_handler(input).as_str());
+    assert_eq!("Hello\\nWorld\n", EchoParser::new(input).parse());
 }
 
 #[test]
 fn echo_with_escape_characters_enabled_with_omit_newline() {
     let input = EchoArgs::new(Some(vec!["Hello\\tWorld".to_string()]), true, true, true);
-    assert_eq!("Hello\tWorld", echo_handler(input).as_str());
+    assert_eq!("Hello\tWorld", EchoParser::new(input).parse());
 }
 
 #[test]
 fn echo_with_escape_characters_disabled_with_omit_newline() {
     let input = EchoArgs::new(Some(vec!["Hello\\tWorld".to_string()]), true, false, true);
-    assert_eq!("Hello\\tWorld", echo_handler(input).as_str());
+    assert_eq!("Hello\\tWorld", EchoParser::new(input).parse());
 }
 
 #[test]
@@ -44,7 +44,7 @@ fn echo_with_mixed_content_with_escape_characters_enabled() {
         true,
         false,
     );
-    assert_eq!("Line1\nLine2\tTabbed\n", echo_handler(input).as_str());
+    assert_eq!("Line1\nLine2\tTabbed\n", EchoParser::new(input).parse());
 }
 
 #[test]
@@ -55,13 +55,13 @@ fn echo_with_escaped_backslash_and_quotes() {
         true,
         false,
     );
-    assert_eq!("C:\\Path\"to\"file\n", echo_handler(input).as_str());
+    assert_eq!("C:\\Path\"to\"file\n", EchoParser::new(input).parse());
 }
 
 #[test]
 fn echo_with_empty_input() {
     let input = EchoArgs::new(None, true, false, false);
-    assert_eq!("\n", echo_handler(input).as_str());
+    assert_eq!("\n", EchoParser::new(input).parse());
 }
 
 #[test]
@@ -72,7 +72,7 @@ fn echo_with_multiple_strings() {
         false,
         false,
     );
-    assert_eq!("Hello, World!\n", echo_handler(input).as_str());
+    assert_eq!("Hello, World!\n", EchoParser::new(input).parse());
 }
 
 #[test]
@@ -83,7 +83,7 @@ fn echo_with_multiple_strings_and_escape_enabled() {
         true,
         false,
     );
-    assert_eq!("Hello\n World\n", echo_handler(input).as_str());
+    assert_eq!("Hello\n World\n", EchoParser::new(input).parse());
 }
 
 #[test]
@@ -99,5 +99,5 @@ fn echo_with_multiple_spaces() {
         false,
         false,
     );
-    assert_eq!("This is a test\n", echo_handler(input).as_str());
+    assert_eq!("This is a test\n", EchoParser::new(input).parse());
 }
