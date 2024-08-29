@@ -4,5 +4,5 @@ mod find;
 mod grep;
 mod ls;
 
-pub use cat::cat_handler;
+pub use cat::CatParser;
 pub use echo::EchoParser;
