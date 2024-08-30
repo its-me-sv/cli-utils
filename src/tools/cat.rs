@@ -23,7 +23,7 @@ impl CatParser {
     fn handle_file_names(&self, file_names: &[String]) -> String {
         let estimated_size = file_names
             .iter()
-            .map(|name| fs::metadata(name).map(|m| m.len() as usize).unwrap_or(0))
+            .map(|name| fs::metadata(name).map_or(0, |m| m.len() as usize))
             .sum();
         let mut result = String::with_capacity(estimated_size);
         let mut line_count = 1;
