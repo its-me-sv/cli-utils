@@ -45,20 +45,40 @@ impl CatParser {
     fn parse_file_contents(&self, file_content: String, line_count: &mut u128) -> String {
         let total_lines = file_content.lines().count();
         let digits_len = total_lines.to_string().len();
+        let mut last_line_was_empty = false;
 
         file_content.lines().fold(
             String::with_capacity(file_content.len() + total_lines * 10),
             |mut result, line| {
-                result.push_str(&self.parse_line(line, line_count, digits_len));
-                result.push('\n');
+                result.push_str(&self.parse_line(
+                    line,
+                    line_count,
+                    digits_len,
+                    &mut last_line_was_empty,
+                ));
                 result
             },
         )
     }
 
-    fn parse_line(&self, line: &str, line_count: &mut u128, digits_len: usize) -> String {
+    fn parse_line(
+        &self,
+        line: &str,
+        line_count: &mut u128,
+        digits_len: usize,
+        last_line_was_empty: &mut bool,
+    ) -> String {
         let args = &self.args;
         let mut line = line.to_string();
+        let curr_line_is_empty = line.is_empty();
+
+        if curr_line_is_empty {
+            if args.squeeze_adjacent_blank_lines && *last_line_was_empty {
+                *last_line_was_empty = false;
+                return line;
+            }
+            *last_line_was_empty = true;
+        }
 
         if args.show_all_characters
             || args.show_non_printing_characters_and_end_with_dollar
@@ -99,6 +119,8 @@ impl CatParser {
         {
             line.push('$');
         }
+
+        line.push('\n');
         line
     }
 }

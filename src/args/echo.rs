@@ -14,19 +14,3 @@ pub struct EchoArgs {
     #[arg(short = 'n')]
     pub omit_newline: bool,
 }
-
-impl EchoArgs {
-    pub fn new(
-        strings: Option<Vec<String>>,
-        disable_escape_characters: bool,
-        enable_escape_characters: bool,
-        omit_newline: bool,
-    ) -> Self {
-        Self {
-            strings,
-            disable_escape_characters,
-            enable_escape_characters,
-            omit_newline,
-        }
-    }
-}
