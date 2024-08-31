@@ -5,6 +5,7 @@ use crate::args::CatArgs;
 pub struct CatParser {
     args: CatArgs,
     line_count: u128,
+    last_line_was_empty: bool,
 }
 
 impl CatParser {
@@ -12,6 +13,7 @@ impl CatParser {
         Self {
             args,
             line_count: 1,
+            last_line_was_empty: false,
         }
     }
 
@@ -44,34 +46,28 @@ impl CatParser {
     fn parse_file_contents(&mut self, file_content: String) -> String {
         let total_lines = file_content.lines().count();
         let largest_digit_width = total_lines.to_string().len();
-        let mut last_line_was_empty = false;
 
         let estimated_size = file_content.len() + total_lines * 10;
         let mut result = String::with_capacity(estimated_size);
 
         let parsed_lines = file_content
             .lines()
-            .map(|line| self.parse_line(line, largest_digit_width, &mut last_line_was_empty));
+            .map(|line| self.parse_line(line, largest_digit_width));
         result.extend(parsed_lines);
 
         result
     }
 
-    fn parse_line(
-        &mut self,
-        line: &str,
-        largest_digit_width: usize,
-        last_line_was_empty: &mut bool,
-    ) -> String {
+    fn parse_line(&mut self, line: &str, largest_digit_width: usize) -> String {
         let mut line = line.to_string();
         let curr_line_is_empty = line.is_empty();
 
         if curr_line_is_empty {
-            if self.args.squeeze_adjacent_blank_lines && *last_line_was_empty {
-                *last_line_was_empty = false;
+            if self.args.squeeze_adjacent_blank_lines && self.last_line_was_empty {
+                self.last_line_was_empty = false;
                 return line;
             }
-            *last_line_was_empty = true;
+            self.last_line_was_empty = true;
         }
 
         if self.args.show_all_characters
