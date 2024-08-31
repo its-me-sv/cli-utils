@@ -34,7 +34,7 @@ impl CatParser {
                 });
                 result.extend(parsed_files);
 
-                // Assigning back the taken value
+                // Assigning back the taken value take out from self
                 self.args.file_names = Some(file_names);
 
                 result
@@ -43,22 +43,24 @@ impl CatParser {
 
     fn parse_file_contents(&mut self, file_content: String) -> String {
         let total_lines = file_content.lines().count();
-        let digits_len = total_lines.to_string().len();
+        let largest_digit_width = total_lines.to_string().len();
         let mut last_line_was_empty = false;
 
-        file_content.lines().fold(
-            String::with_capacity(file_content.len() + total_lines * 10),
-            |mut result, line| {
-                result.push_str(&self.parse_line(line, digits_len, &mut last_line_was_empty));
-                result
-            },
-        )
+        let estimated_size = file_content.len() + total_lines * 10;
+        let mut result = String::with_capacity(estimated_size);
+
+        let parsed_lines = file_content
+            .lines()
+            .map(|line| self.parse_line(line, largest_digit_width, &mut last_line_was_empty));
+        result.extend(parsed_lines);
+
+        result
     }
 
     fn parse_line(
         &mut self,
         line: &str,
-        digits_len: usize,
+        largest_digit_width: usize,
         last_line_was_empty: &mut bool,
     ) -> String {
         let mut line = line.to_string();
@@ -94,14 +96,22 @@ impl CatParser {
         }
 
         if self.args.numbered_list_excluding_non_blank_lines && !line.is_empty() {
-            line = format!("{:width$}  {line}", self.line_count, width = digits_len + 2);
+            line = format!(
+                "{:width$}  {line}",
+                self.line_count,
+                width = largest_digit_width + 2
+            );
             self.line_count += 1;
         }
 
         if self.args.numbered_list_including_blank_lines
             && !self.args.numbered_list_excluding_non_blank_lines
         {
-            line = format!("{:width$}  {line}", self.line_count, width = digits_len + 2);
+            line = format!(
+                "{:width$}  {line}",
+                self.line_count,
+                width = largest_digit_width + 2
+            );
             self.line_count += 1;
         }
 
