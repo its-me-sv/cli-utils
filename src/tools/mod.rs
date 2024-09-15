@@ -6,3 +6,4 @@ mod ls;
 
 pub use cat::CatParser;
 pub use echo::EchoParser;
+pub use ls::LsParser;

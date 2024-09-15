@@ -7,7 +7,7 @@ mod ls;
 pub use cat::CatArgs;
 use clap::{Parser, Subcommand};
 pub use echo::EchoArgs;
-use ls::LsArgs;
+pub use ls::LsArgs;
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
