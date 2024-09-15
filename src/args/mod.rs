@@ -7,6 +7,7 @@ mod ls;
 pub use cat::CatArgs;
 use clap::{Parser, Subcommand};
 pub use echo::EchoArgs;
+use ls::LsArgs;
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
@@ -22,7 +23,7 @@ pub enum Tool {
     /// Concatenates files
     Cat(CatArgs),
     /// Lists directories
-    Ls,
+    Ls(LsArgs),
     /// Locates files or directories
     Find,
     /// Matches text in files
